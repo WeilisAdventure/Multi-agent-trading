@@ -41,7 +41,7 @@ def handle_pubsub():
             return "Missing request_id", 400
 
         result = analyze_risk(risk_data)
-        print(f"🔐 Risk result for {request_id}: {result}")
+        print(f"Risk result for {request_id}: {result}")
 
         db.collection("agent_results").document(request_id).set({
             "risk": result
@@ -50,7 +50,7 @@ def handle_pubsub():
         return jsonify({"status": "Risk analysis stored"}), 200
 
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
         return f"Error: {str(e)}", 500
 
 @app.route("/", methods=["GET"])
