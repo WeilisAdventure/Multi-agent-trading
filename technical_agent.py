@@ -50,7 +50,7 @@ def home():
 def handle_pubsub():
     try:
         envelope = request.get_json()
-        print("🔔 Received envelope:", envelope)
+        print("Received envelope:", envelope)
 
         if not envelope or 'message' not in envelope:
             print("No Pub/Sub message in envelope.")
@@ -63,7 +63,7 @@ def handle_pubsub():
 
         # Decode base64 data
         payload_json = base64.b64decode(message['data']).decode("utf-8")
-        print("🧾 Decoded payload:", payload_json)
+        print("Decoded payload:", payload_json)
 
         payload = json.loads(payload_json)
         request_id = payload.get("request_id")
