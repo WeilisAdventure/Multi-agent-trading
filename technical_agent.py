@@ -44,7 +44,7 @@ def get_technical_indicators(ticker="AAPL"):
 
 @app.route("/", methods=["GET"])
 def home():
-    return "✅ Technical Agent is live!", 200
+    return "Technical Agent is live!", 200
 
 @app.route("/", methods=["POST"])
 def handle_pubsub():
@@ -53,12 +53,12 @@ def handle_pubsub():
         print("🔔 Received envelope:", envelope)
 
         if not envelope or 'message' not in envelope:
-            print("❌ No Pub/Sub message in envelope.")
+            print("No Pub/Sub message in envelope.")
             return "Bad Request: No Pub/Sub message found", 400
 
         message = envelope['message']
         if 'data' not in message:
-            print("❌ No 'data' field in Pub/Sub message.")
+            print("No 'data' field in Pub/Sub message.")
             return "Bad Request: No data field", 400
 
         # Decode base64 data
@@ -70,14 +70,14 @@ def handle_pubsub():
         ticker = payload.get("symbol", "AAPL")  # <-- Fix here: not price_data, it's just symbol
 
         if not request_id:
-            print("❌ Missing request_id.")
+            print("Missing request_id.")
             return "Bad Request: request_id required", 400
 
-        print(f"📈 Running indicator analysis for: {ticker}")
+        print(f"Running indicator analysis for: {ticker}")
         result = get_technical_indicators(ticker)
-        print(f"✅ Result: {result}")
+        print(f"Result: {result}")
 
-        print(f"💾 Writing to Firestore: agent_results/{request_id}")
+        print(f"Writing to Firestore: agent_results/{request_id}")
         db.collection("agent_results").document(request_id).set({
             "technical": result
         }, merge=True)
@@ -85,7 +85,7 @@ def handle_pubsub():
         return "Processed", 200
 
     except Exception as e:
-        print("❌ Exception occurred:", str(e))
+        print("Exception occurred:", str(e))
         return f"Internal Server Error: {str(e)}", 500
 
 if __name__ == "__main__":
