@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Agent Intelligent Trading Assistant</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for Inter font and specific card border */
+        body {
+            font-family: "Inter", sans-serif;
+        }
+        /* The border-left is handled by Tailwind classes like border-blue-400 */
+    </style>
+    <script>
+        function autoRefresh() {
+            // Retrieve data passed from the server-side rendering
+            const result = {{ result|default({})|tojson }};
+            const requestId = "{{ request_id }}";
+
+            // If a request ID exists and any of the agent results are missing,
+            // refresh the page after 5 seconds to check for updates.
+            if (requestId && (!result || !result.technical || !result.risk || !result.news)) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 5000); // Refresh every 5 seconds
+            }
+        }
+        // Call autoRefresh when the window loads
+        window.onload = autoRefresh;
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="flex flex-col md:flex-row bg-white rounded-xl shadow-lg overflow-hidden max-w-6xl w-full">
+        <!-- Left: Form Panel -->
+        <div class="w-full md:w-96 p-6 bg-gray-50 border-r border-gray-200 flex-shrink-0">
+            <h1 class="text-3xl font-extrabold mb-8 text-gray-900 text-center">Multi-Agent Intelligent Trading Assistant</h1>
+
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">📥 Submit New Analysis</h2>
+            <form method="POST" action="/submit" class="space-y-4">
+                <div>
+                    <label for="symbol" class="block text-sm font-medium text-gray-700 mb-1">Stock Symbol:</label>
+                    <input type="text" id="symbol" name="symbol" value="{{ symbol or 'AAPL' }}" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+
+                <div>
+                    <label for="risk" class="block text-sm font-medium text-gray-700 mb-1">Risk Position ($):</label>
+                    <input type="number" id="risk" name="risk" value="{{ risk or 100000 }}" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+
+                <div>
+                    <label for="news" class="block text-sm font-medium text-gray-700 mb-1">News Text:</label>
+                    <textarea id="news" name="news" rows="3"
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">{{ news or 'Apple just announced a new AI feature.' }}</textarea>
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                    Analyze
+                </button>
+            </form>
+
+           
+        </div>
+
+        <!-- Right: Result Display Panel -->
+        <div class="flex-1 p-6 bg-white overflow-y-auto">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">📊 Analysis Result</h2>
+
+            {% if request_id %}
+                <div class="bg-blue-50 border-l-4 border-blue-400 rounded-lg p-4 mb-6 shadow-sm">
+                    <strong class="text-blue-800">Request ID:</strong> <span class="text-blue-700 font-mono break-all">{{ request_id }}</span>
+                </div>
+
+                <!-- Technical Agent Result -->
+                <div class="bg-green-50 border-l-4 border-green-400 rounded-lg p-4 mb-6 shadow-sm">
+                    <h3 class="text-xl font-semibold mb-2 text-green-800">📈 Technical Agent</h3>
+                    {% if result.technical %}
+                        <div class="text-gray-800 text-sm">
+                            {% if result.technical.ticker %}
+                                <p><strong>Ticker:</strong> {{ result.technical.ticker }}</p>
+                            {% endif %}
+                            {% if result.technical.Close %}
+                                <p><strong>Closing Price:</strong> ${{ "%.2f"|format(result.technical.Close) }}</p>
+                            {% endif %}
+                            {% if result.technical.RSI %}
+                                <p><strong>RSI:</strong> {{ "%.2f"|format(result.technical.RSI) }}</p>
+                            {% endif %}
+                            {% if result.technical.SMA20 %}
+                                <p><strong>SMA20:</strong> ${{ "%.2f"|format(result.technical.SMA20) }}</p>
+                            {% endif %}
+                            {% if result.technical.signal %}
+                                <p><strong>Signal:</strong> <span class="font-bold">{{ result.technical.signal }}</span></p>
+                            {% endif %}
+                            {# If there's a raw_response field, display it as a fallback #}
+                            {% if result.technical.raw_response %}
+                                <p class="mt-2 text-gray-600"><strong>Raw Response:</strong></p>
+                                <pre class="bg-gray-100 p-3 rounded-md overflow-x-auto">{{ result.technical.raw_response | tojson(indent=2) }}</pre>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <p class="loading text-gray-500 italic">Waiting for technical agent response...</p>
+                    {% endif %}
+                </div>
+
+                <!-- Risk Agent Result -->
+                <div class="bg-red-50 border-l-4 border-red-400 rounded-lg p-4 mb-6 shadow-sm">
+                    <h3 class="text-xl font-semibold mb-2 text-red-800">📉 Risk Agent</h3>
+                    {% if result.risk %}
+                        <div class="text-gray-800 text-sm">
+                            {% if result.risk.position %}
+                                <p><strong>Current Position:</strong> ${{ "%.2f"|format(result.risk.position) }}</p>
+                            {% endif %}
+
+                            {% if result.risk.rating %}
+                                <p><strong>Risk Level:</strong> <span class="font-bold">{{ result.risk.rating }}</span></p>
+                            {% endif %}
+                            {% if result.risk.analysis %}
+                                <p><strong>Analysis:</strong> <span class="font-bold">{{ result.risk.analysis }}</span></p>
+                            {% endif %}
+                            
+                        </div>
+                    {% else %}
+                        <p class="loading text-gray-500 italic">Waiting for risk agent response...</p>
+                    {% endif %}
+                </div>
+
+                <!-- News Agent Result -->
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-4 mb-6 shadow-sm">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-800">📰 News Agent</h3>
+                    {% if result.news %}
+                        <div class="text-gray-800 text-sm">
+                            {% if result.news.sentiment %}
+                                <p><strong>Sentiment:</strong> <span class="font-bold">{{ result.news.sentiment }}</span></p>
+                            {% endif %}
+                            {% if result.news.confidence %}
+                                <p><strong>Confidence:</strong> {{ result.news.confidence }}</p> {# Changed from %% to % #}
+                            {% endif %}
+                            {% if result.news.summary %}
+                                <p><strong>Summary:</strong> {{ result.news.summary }}</p>
+                            {% endif %}
+                            
+                        </div>
+                    {% else %}
+                        <p class="loading text-gray-500 italic">Waiting for news agent response...</p>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">Submit a new analysis or enter a Request ID to view results.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
