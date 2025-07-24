@@ -41,8 +41,7 @@ def analyze_sentiment(text):
 
 @app.route("/", methods=["POST"])
 def handle_pubsub():
-    # print("🔔 Raw incoming data:", request.data)
-    # print("🔍 Headers:", dict(request.headers))
+
     try:
         envelope = request.get_json(force=True, silent=True)
         if not envelope or "message" not in envelope:
@@ -70,7 +69,7 @@ def handle_pubsub():
 
         return jsonify({"status": "News sentiment stored"}), 200
     except Exception as e:
-        print("❌ Error during processing:", e)
+        print("Error during processing:", e)
         return f"Error: {str(e)}", 500
 
 @app.route("/", methods=["GET"])
