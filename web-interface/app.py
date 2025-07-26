@@ -1,8 +1,9 @@
 from flask import Flask, request, render_template, redirect, url_for
 from google.cloud import firestore, pubsub_v1
 import uuid
-import json
-import os
+import json, os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 db = firestore.Client()
@@ -74,3 +75,7 @@ def results(request_id):
     news = request.args.get("news", "")
 
     return render_template("index.html", request_id=request_id, symbol=symbol, risk=risk, news=news, result=result)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("WEB_INTERFACE_PORT", 8080))
+    app.run(host="0.0.0.0", port=port)

@@ -3,6 +3,8 @@ from google.cloud import firestore
 import os
 import base64
 import json
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 db = firestore.Client()
@@ -58,5 +60,5 @@ def health_check():
     return "Risk Agent is running!", 200
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get("RISK_AGENT_PORT", 8080))
     app.run(host="0.0.0.0", port=port)

@@ -1,0 +1,16 @@
+[project]
+name = "multi-agent-trading"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv>=0.9.9",
+    "flask>=3.1.1",
+    "google>=3.0.0",
+    "google-cloud>=0.34.0",
+    "google-cloud-firestore>=2.21.0",
+    "google-cloud-pubsub>=2.31.0",
+    "google-generativeai>=0.8.5",
+    "yfinance>=0.2.65",
+]

@@ -1,0 +1,103 @@
+# Byte-code files
+*.pyc
+__pycache__/
+
+# Distribution / packaging
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+.tox/
+.nox/
+
+# Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.directory
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.hypothesis/
+.cache/
+logs/
+# Sphinx documentation
+docs/_build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Virtual environment files (common names)
+.venv/
+.env/
+# You might have other custom virtual environment names, add them here
+# e.g., my_project_env/
+.keys/
+# OS generated files
+.DS_Store
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE specific files
+*.iml # IntelliJ IDEA
+.project # Eclipse
+.pydevproject # PyDev
+.history/ # PyCharm local history
+
+# Miscellaneous
+*.log
+*.sqlite3
+*.db
+instance/ # Flask instance folder
+local_settings.py # Django local settings
+
+# For Machine Learning / Data Science projects
+# These can be very large and should generally not be committed
+data/
+models/
+notebooks/output/
+results/
+artifacts/
+
+# Private credentials / configuration
+config.ini
+.env
+*.pem
+*.key
+*.json # Be careful with this, only if it contains sensitive data (e.g., service account keys)
+
+# Compiled executables (if your project generates them)
+*.so
+*.dylib
+*.dll
+*.exe
+
+# PyInstaller
+*.spec
+
+# Docker
+.dockerignore # This is for Docker itself, not for git
+Dockerfile.prod # Example of a specific Dockerfile you might want to ignore if it's for deployment only
+docker-compose.override.yml # If you have local overrides you don't want to commit
+
+# Celerybeat files
+celerybeat.pid
+
+# pip-tools files
+*-requirements.txt.bak

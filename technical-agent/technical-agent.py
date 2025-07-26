@@ -5,6 +5,8 @@ import pandas as pd
 import os
 import json
 import base64
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 db = firestore.Client()
@@ -89,5 +91,5 @@ def handle_pubsub():
         return f"Internal Server Error: {str(e)}", 500
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get("TECHNICAL_AGENT_PORT", 8080))
     app.run(host="0.0.0.0", port=port)

@@ -4,13 +4,15 @@ import google.generativeai as genai
 import os
 import base64
 import json
-import re
+import re, os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 db = firestore.Client()
 
 # Configure Gemini API key from environment variable
-genai.configure(api_key="AIzaSyCeMBLHYdNSrJH9oCWY9x5lFv9M27BoQ40")
+genai.configure(api_key=os.getenv('GOOGLE_GEMINI_API_KEY'))
 
 model = genai.GenerativeModel("gemini-2.0-flash-lite")
 
@@ -77,5 +79,5 @@ def health_check():
     return "News Agent is running!", 200
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get("NEWS_AGENT_PORT", 8080))
     app.run(host="0.0.0.0", port=port)
